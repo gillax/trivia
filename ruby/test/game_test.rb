@@ -14,6 +14,13 @@ class GameTest < MiniTest::Unit::TestCase
     @game = nil
   end
 
+  # define_methodで動的に定義したメソッドテスト
+  def test_define_methods
+    UglyTrivia::Game::CATEGORIES.each do |category|
+      random_index_for_create_question(category)
+    end
+  end
+
   # initializeテスト
   # インスタンス変数の初期化チェック
   def test_initialize
@@ -207,4 +214,17 @@ class GameTest < MiniTest::Unit::TestCase
     assert_equal true, @game.send("did_player_win")
   end
 
+
+  private
+
+  # create_xxx_questionメソッドテスト
+  def random_index_for_create_question(category)
+    # respond_to?
+    assert_respond_to(@game, "create_#{category}_question", "create_#{category}_questionメソッドが定義されていない！")
+    # 0-1000からランダムに抽出した値と一致するか5回試す
+    5.times.each do |i|
+      index = rand(1000)
+      assert_equal "#{category.capitalize} Question #{index}", @game.send("create_#{category}_question", index)
+    end
+  end
 end

@@ -1,29 +1,33 @@
+# -*- coding: UTF-8 -*-
 module UglyTrivia
   class Game
-    def  initialize
+    CATEGORIES = %w{ pop science sports rock }
+
+    # create {pop,science,sports,rock} question まとめてメソッド定義
+    CATEGORIES.each do |category|
+      define_method "create_#{category}_question" do |index|
+        "#{category.capitalize} Question #{index}"
+      end
+    end
+
+    def initialize
       @players = []
       @places = Array.new(6, 0)
       @purses = Array.new(6, 0)
       @in_penalty_box = Array.new(6, nil)
 
-      @pop_questions = []
-      @science_questions = []
-      @sports_questions = []
-      @rock_questions = []
-
       @current_player = 0
       @is_getting_out_of_penalty_box = false
 
-      50.times do |i|
-        @pop_questions.push "Pop Question #{i}"
-        @science_questions.push "Science Question #{i}"
-        @sports_questions.push "Sports Question #{i}"
-        @rock_questions.push create_rock_question(i)
+      # カテゴリー毎の質問リストを初期化
+      CATEGORIES.each do |category|
+        instance_variable_set("@#{category}_questions", [])
       end
-    end
-
-    def create_rock_question(index)
-      "Rock Question #{index}"
+      50.times do |i|
+        CATEGORIES.each do |category|
+          eval("@#{category}_questions").push send("create_#{category}_question", i)
+        end
+      end
     end
 
     def is_playable?
@@ -64,7 +68,7 @@ module UglyTrivia
         else
           puts "#{@players[@current_player]} is not getting out of the penalty box"
           @is_getting_out_of_penalty_box = false
-          end
+        end
 
       else
 
@@ -87,16 +91,8 @@ module UglyTrivia
     end
 
     def current_category
-      return 'Pop' if @places[@current_player] == 0
-      return 'Pop' if @places[@current_player] == 4
-      return 'Pop' if @places[@current_player] == 8
-      return 'Science' if @places[@current_player] == 1
-      return 'Science' if @places[@current_player] == 5
-      return 'Science' if @places[@current_player] == 9
-      return 'Sports' if @places[@current_player] == 2
-      return 'Sports' if @places[@current_player] == 6
-      return 'Sports' if @places[@current_player] == 10
-      return 'Rock'
+      val = @places[@current_player] % CATEGORIES.length
+      return CATEGORIES[val].capitalize
     end
 
   public

@@ -73,35 +73,27 @@ module UglyTrivia
     end
 
     def was_correctly_answered
+      is_continue = true
+
       if @in_penalty_box[@current_player]
         if @is_getting_out_of_penalty_box
           puts 'Answer was correct!!!!'
           @purses[@current_player] += 1
           puts "#{@players[@current_player]} now has #{@purses[@current_player]} Gold Coins."
 
-          winner = did_player_win()
-          @current_player += 1
-          @current_player = 0 if @current_player == @players.length
-
-          winner
-        else
-          @current_player += 1
-          @current_player = 0 if @current_player == @players.length
-          true
+          is_continue = did_player_win
         end
 
       else
-
         puts "Answer was corrent!!!!"
         @purses[@current_player] += 1
         puts "#{@players[@current_player]} now has #{@purses[@current_player]} Gold Coins."
 
-        winner = did_player_win
-        @current_player += 1
-        @current_player = 0 if @current_player == @players.length
-
-        return winner
+        is_continue = did_player_win
       end
+
+      next_player
+      return is_continue
     end
 
     def wrong_answer
@@ -124,6 +116,11 @@ module UglyTrivia
     def move_place(roll)
       @places[@current_player] = @places[@current_player] + roll
       @places[@current_player] = @places[@current_player] - 12 if @places[@current_player] > 11
+    end
+
+    def next_player
+      @current_player += 1
+      @current_player = 0 if @current_player == @players.length
     end
 
     def ask_question

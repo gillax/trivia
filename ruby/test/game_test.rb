@@ -199,6 +199,18 @@ class GameTest < MiniTest::Unit::TestCase
     assert_equal 0, @game.instance_variable_get("@places")[0]
   end
 
+  def test_next_player
+    @game.instance_variable_set("@players", ["Namihei", "Fune", "Sazae"])
+ 
+    assert_equal 0, @game.instance_variable_get("@current_player")
+    @game.send("next_player")
+    assert_equal 1, @game.instance_variable_get("@current_player")
+    @game.send("next_player")
+    assert_equal 2, @game.instance_variable_get("@current_player")
+    @game.send("next_player")
+    assert_equal 0, @game.instance_variable_get("@current_player")
+  end
+
   def test_ask_question
     ary = []
     12.times.each { |i| ary << i }

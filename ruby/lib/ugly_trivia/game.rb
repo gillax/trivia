@@ -55,30 +55,21 @@ module UglyTrivia
       puts "They have rolled a #{roll}"
 
       if @in_penalty_box[@current_player]
-        if roll % 2 != 0
-          @is_getting_out_of_penalty_box = true
-
-          puts "#{@players[@current_player]} is getting out of the penalty box"
-          @places[@current_player] = @places[@current_player] + roll
-          @places[@current_player] = @places[@current_player] - 12 if @places[@current_player] > 11
-
-          puts "#{@players[@current_player]}'s new location is #{@places[@current_player]}"
-          puts "The category is #{current_category}"
-          ask_question
-        else
+        if !can_comeback?(roll)
           puts "#{@players[@current_player]} is not getting out of the penalty box"
           @is_getting_out_of_penalty_box = false
+          return
         end
 
-      else
-
-        @places[@current_player] = @places[@current_player] + roll
-        @places[@current_player] = @places[@current_player] - 12 if @places[@current_player] > 11
-
-        puts "#{@players[@current_player]}'s new location is #{@places[@current_player]}"
-        puts "The category is #{current_category}"
-        ask_question
+        @is_getting_out_of_penalty_box = true
+        puts "#{@players[@current_player]} is getting out of the penalty box"
       end
+
+      move_place(roll)
+      puts "#{@players[@current_player]}'s new location is #{@places[@current_player]}"
+
+      puts "The category is #{current_category}"
+      ask_question
     end
 
     def was_correctly_answered
@@ -125,6 +116,15 @@ module UglyTrivia
 
 
   private
+
+    def can_comeback?(roll)
+      !(roll % 2 == 0)
+    end
+
+    def move_place(roll)
+      @places[@current_player] = @places[@current_player] + roll
+      @places[@current_player] = @places[@current_player] - 12 if @places[@current_player] > 11
+    end
 
     def ask_question
       puts @pop_questions.shift if current_category == 'Pop'

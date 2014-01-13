@@ -181,6 +181,24 @@ class GameTest < MiniTest::Unit::TestCase
     assert_equal true, @game.instance_variable_get("@in_penalty_box")[0]
   end
 
+  def test_can_comeback
+    assert @game.send("can_comeback?", 1)
+    refute @game.send("can_comeback?", 2)
+  end
+
+  def test_move_place
+    @game.instance_variable_set("@places", [0])
+
+    @game.send("move_place", 1)
+    assert_equal 1, @game.instance_variable_get("@places")[0]
+    @game.send("move_place", 1)
+    assert_equal 2, @game.instance_variable_get("@places")[0]
+    @game.send("move_place", 9)
+    assert_equal 11, @game.instance_variable_get("@places")[0]
+    @game.send("move_place", 1)
+    assert_equal 0, @game.instance_variable_get("@places")[0]
+  end
+
   def test_ask_question
     ary = []
     12.times.each { |i| ary << i }
